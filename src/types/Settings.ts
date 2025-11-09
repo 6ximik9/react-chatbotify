@@ -13,6 +13,7 @@ export type Settings = {
 		actionDisabledIcon?: string;
 		embedded?: boolean;
 		flowStartTrigger?: string;
+		maxMessages?: number;
 	},
 	tooltip?: {
 		mode?: string;

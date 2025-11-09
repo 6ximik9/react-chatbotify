@@ -145,7 +145,14 @@ export const useMessagesInternal = () => {
 
 		// set an initial empty message to be used for simulating streaming
 		const placeholderMessage = { ...message, content: "" };
-		setSyncedMessages(prev => [...prev, placeholderMessage]);
+		setSyncedMessages(prev => {
+			const updatedMessages = [...prev, placeholderMessage];
+			// Limit message history to prevent performance degradation (default: 1000 messages)
+			const maxMessages = settings.general?.maxMessages || 1000;
+			return updatedMessages.length > maxMessages
+				? updatedMessages.slice(-maxMessages)
+				: updatedMessages;
+		});
 		handlePostMessagesUpdate(syncedMessagesRef.current);
 
 		// initialize default message to empty with stream index position 0
@@ -252,7 +259,14 @@ export const useMessagesInternal = () => {
 			await dispatchRcbEvent(RcbEvent.POST_INJECT_MESSAGE, { message });
 		}
 
-		setSyncedMessages(prev => [...prev, message]);
+		setSyncedMessages(prev => {
+			const updatedMessages = [...prev, message];
+			// Limit message history to prevent performance degradation (default: 1000 messages)
+			const maxMessages = settings.general?.maxMessages || 1000;
+			return updatedMessages.length > maxMessages
+				? updatedMessages.slice(-maxMessages)
+				: updatedMessages;
+		});
 		handlePostMessagesUpdate(syncedMessagesRef.current);
 
 		// update params.userInput if sender is user
@@ -319,7 +333,14 @@ export const useMessagesInternal = () => {
 			}
 
 			setSyncedIsBotTyping(false);
-			setSyncedMessages(prev => [...prev, message]);
+			setSyncedMessages(prev => {
+				const updatedMessages = [...prev, message];
+				// Limit message history to prevent performance degradation (default: 1000 messages)
+				const maxMessages = settings.general?.maxMessages || 1000;
+				return updatedMessages.length > maxMessages
+					? updatedMessages.slice(-maxMessages)
+					: updatedMessages;
+			});
 			handlePostMessagesUpdate(syncedMessagesRef.current);
 			streamMessageMap.current.set(sender, message.id);
 			// if user is scrolling or window is closed, add 1 to unread count
